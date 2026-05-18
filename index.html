@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qonnect – Connect · Solve · Grow</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --bg2: #0d1120;
+    --blue: #2a7fff;
+    --cyan: #00c8ff;
+    --white: #eaf2ff;
+    --gray: #4a5a7a;
+    --border: #1a2540;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Sora', sans-serif;
+    font-weight: 400;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(7,9,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-logo svg { width: 28px; height: 28px; }
+
+  .nav-logo-text {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.3rem;
+    color: var(--white);
+    letter-spacing: -0.01em;
+  }
+  .nav-logo-text span { color: var(--blue); }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .lang-switch {
+    display: flex;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .lang-btn {
+    padding: 6px 14px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--gray);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .lang-btn.active {
+    background: var(--blue);
+    color: #fff;
+  }
+
+  .nav-cta {
+    padding: 10px 22px;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { background: var(--cyan); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, #2a7fff18 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: #2a7fff15;
+    border: 1px solid #2a7fff44;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(2.4rem, 6vw, 5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero-title .accent { color: var(--blue); }
+  .hero-title .cyan { color: var(--cyan); }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    font-weight: 300;
+    color: #7a90b8;
+    max-width: 580px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .btn-primary:hover { background: var(--cyan); transform: translateY(-2px); box-shadow: 0 8px 30px #2a7fff44; }
+
+  .btn-secondary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    background: transparent;
+    color: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .btn-secondary:hover { border-color: var(--blue); color: var(--blue); }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 72px;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--cyan);
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--gray);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* ── SECTION BASE ── */
+  section {
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+
+  .section-sub {
+    font-size: 1rem;
+    font-weight: 300;
+    color: #7a90b8;
+    line-height: 1.7;
+    max-width: 520px;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-top: 60px;
+  }
+
+  .step {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    position: relative;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .step:hover { border-color: var(--blue); transform: translateY(-4px); }
+
+  .step-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #1a2540;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .step-title {
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin-bottom: 10px;
+  }
+
+  .step-desc {
+    font-size: 0.88rem;
+    font-weight: 300;
+    color: #7a90b8;
+    line-height: 1.6;
+  }
+
+  .step-icon {
+    position: absolute;
+    top: 28px;
+    right: 28px;
+    opacity: 0.4;
+  }
+
+  /* ── TWO SIDES ── */
+  .two-sides {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 60px;
+  }
+
+  @media (max-width: 680px) {
+    .two-sides { grid-template-columns: 1fr; }
+    nav { padding: 16px 20px; }
+    .hero-stats { gap: 24px; }
+    .nav-cta { display: none; }
+  }
+
+  .side-card {
+    border-radius: 20px;
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .side-card.seeker {
+    background: linear-gradient(135deg, #0d1a35, #0d1220);
+    border: 1px solid #1a3060;
+  }
+
+  .side-card.provider {
+    background: linear-gradient(135deg, #0d2035, #0d1220);
+    border: 1px solid #1a4060;
+  }
+
+  .side-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .seeker .side-tag { background: #2a7fff22; color: var(--blue); border: 1px solid #2a7fff44; }
+  .provider .side-tag { background: #00c8ff22; color: var(--cyan); border: 1px solid #00c8ff44; }
+
+  .side-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.3rem;
+    font-weight: 900;
+    margin-bottom: 14px;
+  }
+
+  .side-desc {
+    font-size: 0.88rem;
+    font-weight: 300;
+    color: #7a90b8;
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .side-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .example-bubble {
+    background: #ffffff08;
+    border: 1px solid #ffffff10;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    color: #a0b4cc;
+    line-height: 1.5;
+  }
+
+  /* ── CHAT DEMO ── */
+  .chat-demo {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    margin-top: 60px;
+    max-width: 560px;
+  }
+
+  .chat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+
+  .chat-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .avatar-a { background: #2a7fff33; color: var(--blue); border: 1px solid #2a7fff55; }
+  .avatar-b { background: #00c8ff22; color: var(--cyan); border: 1px solid #00c8ff44; }
+
+  .chat-name { font-size: 0.85rem; font-weight: 600; }
+  .chat-status { font-size: 0.7rem; color: var(--gray); }
+
+  .msg {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .msg-bubble {
+    background: #ffffff08;
+    border: 1px solid #ffffff0f;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: #c0d4ee;
+    line-height: 1.5;
+    max-width: 340px;
+  }
+
+  .msg.right { flex-direction: row-reverse; }
+  .msg.right .msg-bubble { background: #2a7fff18; border-color: #2a7fff33; }
+
+  /* ── DOWNLOAD ── */
+  .download-section {
+    text-align: center;
+    padding: 120px 24px;
+    position: relative;
+  }
+
+  .download-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px; height: 400px;
+    background: radial-gradient(ellipse, #2a7fff12 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .download-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .download-sub {
+    font-size: 1rem;
+    font-weight: 300;
+    color: #7a90b8;
+    margin-bottom: 48px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+  }
+
+  .store-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .store-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 28px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--white);
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .store-btn:hover { border-color: var(--blue); transform: translateY(-2px); box-shadow: 0 8px 30px #2a7fff22; }
+
+  .store-btn-label { font-size: 0.65rem; color: var(--gray); letter-spacing: 0.05em; }
+  .store-btn-name { font-family: 'Orbitron', monospace; font-size: 0.9rem; font-weight: 700; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--gray);
+    font-size: 0.78rem;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0;
+  }
+
+
+  /* ── WAITLIST ── */
+  .waitlist-form {
+    max-width: 480px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .waitlist-input {
+    width: 100%;
+    background: #0d1120;
+    border: 1px solid #1a2540;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.9rem;
+    color: #eaf2ff;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .waitlist-input:focus { border-color: #2a7fff; }
+  .waitlist-input::placeholder { color: #4a5a7a; }
+
+  .waitlist-toggle {
+    display: flex;
+    background: #0d1120;
+    border: 1px solid #1a2540;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .waitlist-toggle-btn {
+    flex: 1;
+    padding: 13px 10px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #4a5a7a;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .waitlist-toggle-btn.active { background: #2a7fff; color: #fff; }
+
+  .waitlist-btn {
+    width: 100%;
+    padding: 16px;
+    background: #2a7fff;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Sora', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .waitlist-btn:hover { background: #00c8ff; transform: translateY(-2px); box-shadow: 0 8px 30px #2a7fff44; }
+
+  .waitlist-success {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 32px;
+    background: #10b98112;
+    border: 1px solid #10b98133;
+    border-radius: 16px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .waitlist-success-icon {
+    width: 56px; height: 56px;
+    background: #10b98122;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+  }
+
+  .waitlist-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: #2a7fff12;
+    border: 1px solid #2a7fff33;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    color: #2a7fff;
+    margin-bottom: 8px;
+  }
+
+  .waitlist-privacy {
+    font-size: 0.68rem;
+    color: #4a5a7a;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="data:image/png;base64,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" height="40" style="display:block;">
+  </div>
+  <div class="nav-right">
+    <div class="lang-switch">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('de')">DE</button>
+    </div>
+    <button class="nav-cta" onclick="document.getElementById('download').scrollIntoView({behavior:'smooth'})">
+      <span data-en="Download" data-de="Download">Download</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+
+  <div class="hero-badge">
+    <span data-en="Now Available Worldwide" data-de="Jetzt weltweit verfügbar">Now Available Worldwide</span>
+  </div>
+
+  <h1 class="hero-title">
+    <span data-en="Your Business Problem.<br><span class='cyan'>Solved.</span> Connected." data-de="Dein Business-Problem.<br><span class='cyan'>Gelöst.</span> Verbunden.">Your Business Problem.<br><span class="cyan">Solved.</span> Connected.</h1>
+
+  <p class="hero-sub" data-en="Qonnect bridges companies that have problems with the right people to solve them. Post your challenge. Get matched. Get it done." data-de="Qonnect verbindet Unternehmen mit den richtigen Experten. Beschreibe dein Problem. Werde gematcht. Fertig.">
+    Qonnect bridges companies that have problems with the right people to solve them. Post your challenge. Get matched. Get it done.
+  </p>
+
+  <div class="hero-buttons">
+    <a class="btn-primary" href="#download">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M12 16l-6-6h4V4h4v6h4l-6 6z" fill="white"/><path d="M4 20h16" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      <span data-en="Download the App" data-de="App herunterladen">Download the App</span>
+    </a>
+    <a class="btn-secondary" href="#how">
+      <span data-en="How it works" data-de="Wie es funktioniert">How it works</span>
+    </a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">2</div>
+      <div class="stat-label" data-en="User Types" data-de="Nutzertypen">User Types</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label" data-en="Industries" data-de="Branchen">Industries</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label" data-en="Languages" data-de="Sprachen">Languages</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-label" data-en="How it works" data-de="So funktioniert es">How it works</div>
+  <h2 class="section-title" data-en="Three steps.<br>One solution." data-de="Drei Schritte.<br>Eine Lösung.">Three steps.<br>One solution.</h2>
+  <p class="section-sub" data-en="No complicated setup. No middlemen. Just post your problem and let Qonnect do the rest." data-de="Kein kompliziertes Setup. Keine Vermittler. Beschreibe dein Problem und lass Qonnect den Rest erledigen.">No complicated setup. No middlemen. Just post your problem and let Qonnect do the rest.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <svg class="step-icon" width="32" height="32" fill="none" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" stroke="#2a7fff" stroke-width="1.5"/><path d="M8 10h8M8 14h5" stroke="#2a7fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="step-title" data-en="Post your Problem" data-de="Problem beschreiben">Post your Problem</div>
+      <div class="step-desc" data-en="Describe what your business needs — a specialist, a project leader, staff, or a specific skill. In your language." data-de="Beschreibe was dein Unternehmen braucht — einen Spezialisten, Projektleiter, Personal oder eine bestimmte Fähigkeit. In deiner Sprache.">Describe what your business needs — a specialist, a project leader, staff, or a specific skill. In your language.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <svg class="step-icon" width="32" height="32" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="#2a7fff" stroke-width="1.5"/><path d="M12 8v4l3 3" stroke="#2a7fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="step-title" data-en="Get Matched" data-de="Gematcht werden">Get Matched</div>
+      <div class="step-desc" data-en="Qonnect connects you with providers who can solve exactly your problem — locally or internationally." data-de="Qonnect verbindet dich mit Anbietern, die genau dein Problem lösen können — lokal oder international.">Qonnect connects you with providers who can solve exactly your problem — locally or internationally.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <svg class="step-icon" width="32" height="32" fill="none" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="#2a7fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="step-title" data-en="Connect & Close" data-de="Verbinden & Abschließen">Connect & Close</div>
+      <div class="step-desc" data-en="Chat directly, align on details, agree on the deal — all inside the app. Safe, fast, transparent." data-de="Chatte direkt, stimme Details ab, einige dich — alles in der App. Sicher, schnell, transparent.">Chat directly, align on details, agree on the deal — all inside the app. Safe, fast, transparent.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TWO SIDES -->
+<section id="users">
+  <div class="section-label" data-en="Who is Qonnect for?" data-de="Für wen ist Qonnect?">Who is Qonnect for?</div>
+  <h2 class="section-title" data-en="Two sides.<br>One platform." data-de="Zwei Seiten.<br>Eine Plattform.">Two sides.<br>One platform.</h2>
+
+  <div class="two-sides">
+    <div class="side-card seeker">
+      <div class="side-tag" data-en="Seeker" data-de="Sucher">Seeker</div>
+      <div class="side-title" data-en="I have a problem" data-de="Ich habe ein Problem">I have a problem</div>
+      <div class="side-desc" data-en="You're a business owner, manager or entrepreneur. You need something done but can't find the right person." data-de="Du bist Unternehmer, Manager oder Selbstständiger. Du brauchst jemanden, findest aber nicht die richtige Person.">You're a business owner, manager or entrepreneur. You need something done but can't find the right person.</div>
+      <div class="side-examples">
+        <div class="example-bubble" data-en="&quot;I need 2 apprentices by summer — Indeed isn't working.&quot;" data-de="&quot;Ich brauche 2 Azubis bis Sommer — Indeed funktioniert nicht.&quot;">"I need 2 apprentices by summer — Indeed isn't working."</div>
+        <div class="example-bubble" data-en="&quot;Looking for an AI specialist for a design project in Belgium.&quot;" data-de="&quot;Suche einen KI-Spezialisten für ein Designprojekt in Belgien.&quot;">"Looking for an AI specialist for a design project in Belgium."</div>
+        <div class="example-bubble" data-en="&quot;Need a project manager for a client with 10 team members.&quot;" data-de="&quot;Brauche einen Projektleiter für einen Kunden mit 10 Mitarbeitern.&quot;">"Need a project manager for a client with 10 team members."</div>
+      </div>
+    </div>
+
+    <div class="side-card provider">
+      <div class="side-tag" data-en="Provider" data-de="Anbieter">Provider</div>
+      <div class="side-title" data-en="I have a solution" data-de="Ich habe eine Lösung">I have a solution</div>
+      <div class="side-desc" data-en="You're a freelancer, agency or specialist. You want to find clients who need exactly what you offer." data-de="Du bist Freelancer, Agentur oder Spezialist. Du möchtest Kunden finden, die genau das brauchen, was du anbietest.">You're a freelancer, agency or specialist. You want to find clients who need exactly what you offer.</div>
+      <div class="side-examples">
+        <div class="example-bubble" data-en="&quot;I'm a graphic designer specializing in brand identity.&quot;" data-de="&quot;Ich bin Grafikdesigner mit Fokus auf Corporate Identity.&quot;">"I'm a graphic designer specializing in brand identity."</div>
+        <div class="example-bubble" data-en="&quot;Our agency handles IT recruitment across Europe.&quot;" data-de="&quot;Unsere Agentur vermittelt IT-Fachkräfte in ganz Europa.&quot;">"Our agency handles IT recruitment across Europe."</div>
+        <div class="example-bubble" data-en="&quot;Certified project manager, available for remote work.&quot;" data-de="&quot;Zertifizierter Projektmanager, verfügbar für Remote-Arbeit.&quot;">"Certified project manager, available for remote work."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CHAT DEMO -->
+<section id="demo">
+  <div class="section-label" data-en="See it in action" data-de="Sieh es in Aktion">See it in action</div>
+  <h2 class="section-title" data-en="Real conversations.<br>Real results." data-de="Echte Gespräche.<br>Echte Ergebnisse.">Real conversations.<br>Real results.</h2>
+
+  <div class="chat-demo">
+    <div class="chat-header">
+      <div class="chat-avatar avatar-a">MK</div>
+      <div>
+        <div class="chat-name">Markus K. — <span style="color:var(--gray);font-weight:300" data-en="Seeker" data-de="Sucher">Seeker</span></div>
+        <div class="chat-status" data-en="Posted: AI Designer needed, Belgium project" data-de="Gepostet: KI-Designer gesucht, Belgien-Projekt">Posted: AI Designer needed, Belgium project</div>
+      </div>
+    </div>
+
+    <div class="msg">
+      <div class="chat-avatar avatar-a">MK</div>
+      <div class="msg-bubble" data-en="Hi, I saw your profile. We need an AI specialist for a graphic design project in Brussels. Budget is around €4,000." data-de="Hallo, ich habe dein Profil gesehen. Wir suchen einen KI-Spezialisten für ein Grafikdesign-Projekt in Brüssel. Budget ca. 4.000 €.">Hi, I saw your profile. We need an AI specialist for a graphic design project in Brussels. Budget is around €4,000.</div>
+    </div>
+
+    <div class="msg right">
+      <div class="chat-avatar avatar-b">JS</div>
+      <div class="msg-bubble" data-en="Sounds great! I'm based in Cologne and work remotely. Can we schedule a quick call to discuss the details?" data-de="Klingt super! Ich bin in Köln und arbeite remote. Können wir kurz telefonieren, um Details zu besprechen?">Sounds great! I'm based in Cologne and work remotely. Can we schedule a quick call to discuss the details?</div>
+    </div>
+
+    <div class="msg">
+      <div class="chat-avatar avatar-a">MK</div>
+      <div class="msg-bubble" data-en="Perfect. Tomorrow at 10am? I'll send you the project brief." data-de="Perfekt. Morgen um 10 Uhr? Ich schicke dir das Projektbriefing.">Perfect. Tomorrow at 10am? I'll send you the project brief.</div>
+    </div>
+
+    <div class="msg right">
+      <div class="chat-avatar avatar-b">JS</div>
+      <div class="msg-bubble" data-en="✓ Deal. See you tomorrow!" data-de="✓ Deal. Bis morgen!">✓ Deal. See you tomorrow!</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DOWNLOAD -->
+<div class="download-section" id="download">
+  <div class="download-glow"></div>
+  <div class="section-label" style="text-align:center" data-en="Get Started" data-de="Loslegen">Get Started</div>
+  <h2 class="download-title" data-en="Ready to<br><span class='accent'>Qonnect?</span>" data-de="Bereit zum<br><span class='accent'>Qonnecten?</span>">Ready to<br><span class="accent">Qonnect?</span></h2>
+  <p class="download-sub" data-en="Download the app and start connecting with the right people for your business — worldwide." data-de="Lade die App herunter und verbinde dich mit den richtigen Menschen für dein Unternehmen — weltweit.">Download the app and start connecting with the right people for your business — worldwide.</p>
+
+  <!-- Waitlist count badge -->
+  <div style="display:flex;justify-content:center;margin-bottom:24px">
+    <div class="waitlist-count">
+      <span style="width:7px;height:7px;background:#2a7fff;border-radius:50%;box-shadow:0 0 8px #2a7fff"></span>
+      <span data-en="127 people already on the waitlist" data-de="127 Personen bereits auf der Warteliste">127 people already on the waitlist</span>
+    </div>
+  </div>
+
+  <!-- Waitlist Form -->
+  <div class="waitlist-form" id="waitlist-form">
+    <input class="waitlist-input" id="wl-name" placeholder="Your full name / Vollständiger Name" type="text">
+    <input class="waitlist-input" id="wl-email" placeholder="Your business email / Geschäftliche E-Mail" type="email">
+    <input class="waitlist-input" id="wl-company" placeholder="Company / Unternehmen (optional)" type="text">
+
+    <div class="waitlist-toggle">
+      <button class="waitlist-toggle-btn active" id="btn-seeker" onclick="selectRole('seeker')">🔍 Seeker – I need help</button>
+      <button class="waitlist-toggle-btn" id="btn-provider" onclick="selectRole('provider')">💡 Provider – I offer solutions</button>
+    </div>
+
+    <div class="waitlist-privacy" data-en="🔒 Your data is safe. No spam, no sharing. GDPR compliant." data-de="🔒 Deine Daten sind sicher. Kein Spam, keine Weitergabe. DSGVO-konform.">🔒 Your data is safe. No spam, no sharing. GDPR compliant.</div>
+
+    <button class="waitlist-btn" onclick="submitWaitlist()">
+      <span data-en="Join the Waitlist →" data-de="Auf die Warteliste →">Join the Waitlist →</span>
+    </button>
+  </div>
+
+  <!-- Success State -->
+  <div class="waitlist-success" id="waitlist-success">
+    <div class="waitlist-success-icon">✓</div>
+    <div style="font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;color:#eaf2ff" data-en="You're on the list!" data-de="Du bist dabei!">You're on the list!</div>
+    <div style="font-size:0.85rem;color:#7a90b8;text-align:center;line-height:1.6" data-en="We'll notify you as soon as Qonnect launches. Get ready to connect." data-de="Wir benachrichtigen dich sobald Qonnect startet. Mach dich bereit.">We'll notify you as soon as Qonnect launches. Get ready to connect.</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <img src="data:image/png;base64,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" height="32" style="display:block;">
+  </div>
+  <div data-en="© 2025 Qonnect. All rights reserved." data-de="© 2025 Qonnect. Alle Rechte vorbehalten.">© 2025 Qonnect. All rights reserved.</div>
+  <div data-en="Connect · Solve · Grow" data-de="Verbinden · Lösen · Wachsen" style="color:var(--blue)">Connect · Solve · Grow</div>
+</footer>
+
+<script>
+
+  var selectedRole = 'seeker';
+
+  function selectRole(role) {
+    selectedRole = role;
+    document.getElementById('btn-seeker').classList.toggle('active', role === 'seeker');
+    document.getElementById('btn-provider').classList.toggle('active', role === 'provider');
+  }
+
+  function submitWaitlist() {
+    const name = document.getElementById('wl-name').value.trim();
+    const email = document.getElementById('wl-email').value.trim();
+    if (!name || !email) {
+      document.getElementById('wl-name').style.borderColor = '#ef4444';
+      document.getElementById('wl-email').style.borderColor = '#ef4444';
+      setTimeout(() => {
+        document.getElementById('wl-name').style.borderColor = '';
+        document.getElementById('wl-email').style.borderColor = '';
+      }, 1500);
+      return;
+    }
+    document.getElementById('waitlist-form').style.display = 'none';
+    document.getElementById('waitlist-success').style.display = 'flex';
+  }
+
+  function setLang(lang) {
+    // Update buttons
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+
+    // Update all text elements
+    document.querySelectorAll('[data-en]').forEach(el => {
+      const text = el.getAttribute(`data-${lang}`);
+      if (text) el.innerHTML = text;
+    });
+
+    // Update html lang
+    document.documentElement.lang = lang;
+  }
+</script>
+
+</body>
+</html>
